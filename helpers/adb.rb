@@ -166,6 +166,26 @@ module MobileDevicePool
       end
     end
     
+    def show_battery_level(device_sn = nil)
+      cmd = PrivateMethods.synthesize_command('adb shell dumpsys battery | grep level', device_sn)
+      result = `#{cmd}`.chomp.match(/\d+$/)
+      if result
+        return result[0].to_i
+      else
+        return 0
+      end
+    end
+    
+    def get_os_version_number
+      cmd = PrivateMethods.synthesize_command('adb shell getprop ro.build.version.release', device_sn)
+      `#{cmd}`.strip
+    end
+    
+    def get_os_api_level
+      cmd = PrivateMethods.synthesize_command('adb shell getprop ro.build.version.sdk', device_sn)
+      `#{cmd}`.strip.to_i
+    end
+    
     def start_monkey_test(package_name, device_sn = nil, options = {})
       numbers_of_events = options.fetch(:numbers_of_events, 50000)
       cmd = PrivateMethods.synthesize_command("adb shell monkey -p #{package_name} -v #{numbers_of_events}", device_sn)

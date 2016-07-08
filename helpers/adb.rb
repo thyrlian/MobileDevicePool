@@ -36,6 +36,7 @@ module MobileDevicePool
         product_properties = PrivateMethods.get_properties(device_sn, 'ro.product', *%w(manufacturer brand model))
         os_properties = PrivateMethods.get_properties(device_sn, 'ro.build.version', *%w(release sdk))
         device.merge!(product_properties).merge!(os_properties)
+        device['battery'] = show_battery_level(device_sn)
         devices.push(device)
       end
     end
@@ -166,21 +167,7 @@ module MobileDevicePool
     def show_battery_level(device_sn = nil)
       cmd = PrivateMethods.synthesize_command('adb shell dumpsys battery | grep level', device_sn)
       result = `#{cmd}`.chomp.match(/\d+$/)
-      if result
-        return result[0].to_i
-      else
-        return 0
-      end
-    end
-    
-    def get_os_version_number
-      cmd = PrivateMethods.synthesize_command('adb shell getprop ro.build.version.release', device_sn)
-      `#{cmd}`.strip
-    end
-    
-    def get_os_api_level
-      cmd = PrivateMethods.synthesize_command('adb shell getprop ro.build.version.sdk', device_sn)
-      `#{cmd}`.strip.to_i
+      result ? result[0].to_i : 'N/A'
     end
     
     def start_monkey_test(package_name, device_sn = nil, options = {})

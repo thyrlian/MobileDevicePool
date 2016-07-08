@@ -33,12 +33,9 @@ module MobileDevicePool
       devices = list_devices.inject([]) do |devices, device_sn|
         device = {}
         device['sn'] = device_sn
-        ['manufacturer', 'brand', 'model'].each do |property|
-          cmd = "adb -s #{device_sn} shell getprop | grep 'ro.product.#{property}'"
-          regex = /#{property}\]:\s+\[(.*?)\]$/
-          property_value = regex.match(`#{cmd}`.chomp)
-          device[property] = property_value ? property_value[1] : 'N/A'
-        end
+        product_properties = PrivateMethods.get_properties(device_sn, 'ro.product', *%w(manufacturer brand model))
+        os_properties = PrivateMethods.get_properties(device_sn, 'ro.build.version', *%w(release sdk))
+        device.merge!(product_properties).merge!(os_properties)
         devices.push(device)
       end
     end
@@ -206,6 +203,15 @@ module MobileDevicePool
           else
             # -s <specific device>
             cmd.gsub(/^adb\s/, "adb -s #{device_sn} ")
+          end
+        end
+        
+        def get_properties(device_sn, node, *properties)
+          properties.inject({}) do |info, property|
+            cmd = "adb -s #{device_sn} shell getprop #{node}.#{property}"
+            property_value = `#{cmd}`.strip
+            info[property] = property_value.empty? ? 'N/A' : property_value
+            info
           end
         end
       end

@@ -1,4 +1,4 @@
-module CaptainADB
+module MobileDevicePool
   module FileHelper
     def get_screenshots_files(dir)
       screenshots = []

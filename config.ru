@@ -1,2 +1,2 @@
 require_relative 'app'
-run CaptainADB::App
+run MobileDevicePool::App

@@ -1,6 +1,6 @@
 require_relative 'import'
 
-module CaptainADB
+module MobileDevicePool
   class App < Sinatra::Base
     register Sinatra::Namespace
     include ADB

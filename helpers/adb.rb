@@ -1,6 +1,6 @@
 require_relative 'io_stream'
 
-module CaptainADB
+module MobileDevicePool
   module ADB
     def restart_server
       cmd = 'adb kill-server && adb start-server'

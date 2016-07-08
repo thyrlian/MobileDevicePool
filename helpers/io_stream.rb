@@ -1,4 +1,4 @@
-module CaptainADB
+module MobileDevicePool
   class IoStream
     class << self
       def redirect_command_output(cmd, &blk)

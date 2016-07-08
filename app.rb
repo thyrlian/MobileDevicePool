@@ -6,7 +6,7 @@ require 'json'
 require_relative 'routes/init'
 require_relative 'helpers/init'
 
-module CaptainADB
+module MobileDevicePool
   class App < Sinatra::Base
     configure do
       root_dir = File.dirname(__FILE__)

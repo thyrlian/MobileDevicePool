@@ -3,7 +3,6 @@ require_relative 'import'
 module MobileDevicePool
   class App < Sinatra::Base
     register Sinatra::Namespace
-    include ADB
     
     not_found do
       if request.accept?('text/html')
@@ -30,7 +29,7 @@ module MobileDevicePool
     namespace '/api' do
       post '/adb/action/restart/?' do
         content_type :json
-        result = restart_server
+        result = Adb.restart_server
         result.first ? [200, result[1].to_json] : [500, result[1].to_json]
       end
     end

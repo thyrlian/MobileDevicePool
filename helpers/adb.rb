@@ -37,7 +37,7 @@ module MobileDevicePool
           product_properties = get_properties(device_sn, 'ro.product', *%w(manufacturer brand model))
           os_properties = get_properties(device_sn, 'ro.build.version', *%w(release sdk))
           device.merge!(product_properties).merge!(os_properties)
-          device['battery'] = show_battery_level(device_sn)
+          device['battery'] = get_battery_level(device_sn)
           devices.push(device)
         end
       end
@@ -165,7 +165,7 @@ module MobileDevicePool
         end
       end
       
-      def show_battery_level(device_sn = nil)
+      def get_battery_level(device_sn = nil)
         cmd = synthesize_command('adb shell dumpsys battery | grep level', device_sn)
         result = `#{cmd}`.chomp.match(/\d+$/)
         result ? result[0].to_i : 'N/A'

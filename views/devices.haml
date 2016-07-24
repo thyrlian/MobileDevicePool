@@ -1,10 +1,5 @@
 :javascript
   PNotify.prototype.options.styling = "bootstrap3";
-  var screenshots = #{settings.screenshot_files};
-  var imagesList = [];
-  for (var i = 0; i < screenshots.length; i++) {
-    imagesList.push({img: "img/screenshots/" + screenshots[i], caption: screenshots[i].replace(/screenshot_/, '').replace(/\.png/, '')});
-  }
   $(document).ready(function() {
     loadDevicesList();
   });
@@ -30,15 +25,6 @@
       remove: true
     });
   }
-  function selectDevice() {
-    var device = '#{session[:device_sn]}';
-    $('input[name=device_sn][value="'+device+'"]').click();
-    var installed_packages = []
-    if (device.length > 0) {
-      installed_packages = #{list_installed_packages(session[:device_sn])}
-    }
-    $('#packageName').autocomplete({ source: installed_packages });
-  }
   function loadDevicesList() {
     $.get('/api/devices', function(data) {
       $("#devicesList").empty();
@@ -47,42 +33,7 @@
         data.forEach(function(item) {
           $("#devicesList").find("tbody").append($("<tr>").click(function() { $(this).find("td input:radio").prop("checked", true); }).append($("<td>").append($("<input>").attr({name: "device_sn", type: "radio", value: item.sn}))).append($("<td>").text(item.sn)).append($("<td>").text(item.manufacturer)).append($("<td>").text(item.brand)).append($("<td>").text(item.model)).append($("<td>").text(item.release)).append($("<td>").text(item.sdk)).append($("<td>").text(item.battery + "%")));
         });
-        $("#devicesList").append($("<div>").attr("class", "new-line").append($("<button>").attr({id: "btnSelectDevice", type: "submit", class: "btn btn-success center-block"}).text("Select Device")));
-        $("#btnSelectDevice").attr("disabled", false).css("visibility", "visible");
-      } else {
-        $("#btnSelectDevice").attr("disabled", true).css("visibility", "hidden");
-        $("#chosenDevice").empty();
-        $("#chosenPackage").empty();
-        $("#btnScreenshot").remove();
       }
-      selectDevice();
-    });
-  }
-  function deletePackage() {
-    $.ajax({
-      url: '/api/devices/#{session[:device_sn]}/packages/#{session[:package_name]}/',
-      type: 'DELETE',
-      success: function(result) { showNotification('Application #{session[:package_name]} is uninstalled', 'success'); },
-      error: function(result) { showNotification('Can not uninstall application #{session[:package_name]}', 'error'); }
-    });
-  }
-  function deletePackageData() {
-    $.ajax({
-      url: '/api/devices/#{session[:device_sn]}/packages/#{session[:package_name]}/data/',
-      type: 'DELETE',
-      success: function(result) { showNotification('Data and cache for application #{session[:package_name]} are removed', 'success'); },
-      error: function(result) { showNotification('Can not remove data or cache for application #{session[:package_name]}', 'error'); }
-    });
-  }
-  function takeScreenshot() {
-    $.post('/api/devices/#{session[:device_sn]}/screenshots', null, function(data) {
-      var regex = /\/(screenshot_[^\/]*\.png)$/;
-      var newFile = data['file_path'].match(regex)[1];
-      imagesList.unshift({img: "img/screenshots/" + newFile, caption: newFile.replace(/screenshot_/, '').replace(/\.png/, '')});
-      var $fotoramaDiv = $('#fotorama').fotorama();
-      var fotorama = $fotoramaDiv.data('fotorama');
-      fotorama.load(imagesList);
-      showNotification('New screenshot is taken', 'success');
     });
   }
 %div{:class => "vertical-center"}
@@ -90,36 +41,3 @@
   %button{:type => "button", :class => "btn btn-warning vertical-center", :onclick => "loadDevicesList()", :style => "display: inline-block; margin-left: 10px;"} ↻
 %form{:role => "form", :action => "/devices/", :method => "post"}
   %div{:id => "devicesList"}
-%form{:role => "form", :action => "/devices/#{session[:device_sn]}/packages/", :method => "post"}
-  - if session[:device_sn]
-    %div{:id => "packagesList", :class => "form-group"}
-    %label{:for => "packageName"} Application Package Name
-    %div{:class => "new-line ui-widget"}
-      %input{:type => "text", :class => "form-control", :id => "packageName", :name => "package_name", :placeholder => "com.example.application"}
-    %div{:class => "new-line"}
-      %button{:type => "submit", :class => "btn btn-success center-block"} Select Package
-- if session[:device_sn]
-  %div{:id => "chosenDevice", :class => "new-line"}
-    %strong Chosen Device:&nbsp;
-    %em #{session[:device_sn]}
-- if session[:package_name] && !session[:package_name].empty?
-  %div{:id => "chosenPackage", :class => "new-line"}
-    %strong Chosen Application Package:&nbsp;
-    %em #{session[:package_name]}
-- if session[:device_sn] && session[:package_name]
-  %div{:class => "row"}
-    %div{:class => "col-sm-4"}
-      %div{:class => "tile bg-screenshot"}
-        %span{:class => "clickable tile-text", :onclick => "takeScreenshot()"} Take Screenshot
-    %div{:class => "col-sm-4"}
-      %div{:class => "tile bg-delete"}
-        %span{:class => "clickable tile-text", :onclick => "deletePackage()"} Delete Package
-    %div{:class => "col-sm-4"}
-      %div{:class => "tile bg-clean"}
-        %span{:class => "clickable tile-text", :onclick => "deletePackageData()"} Delete Package Cache Data
-- unless settings.screenshot_files.empty?
-  %h2 Screenshots
-  %div{:id => "fotoramaContainer", :class => "centeredImgDiv"}
-    %div{:id => "fotorama", :class => "fotorama", :'data-nav' => "thumbs", :'data-width' => "50%"}
-      - settings.screenshot_files.each do |screenshot|
-        %img{:src => "img/screenshots/#{screenshot}", :'data-caption' => "#{screenshot.gsub(/screenshot_/, '').gsub(/\.png/, '')}"}

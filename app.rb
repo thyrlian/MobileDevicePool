@@ -14,10 +14,7 @@ module MobileDevicePool
       set :app_file, File.join(root_dir, File.basename(__FILE__))
       set :views, "#{root_dir}/views"
       set :public_folder, "#{root_dir}/public"
-      set :screenshot_dir, "#{settings.public_folder}/img/screenshots"
-      set :screenshot_files, []
       set :show_exceptions, :after_handler
-      enable :sessions
       register Sinatra::Namespace
       helpers Sinatra::JSON
     end

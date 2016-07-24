@@ -17,7 +17,7 @@ module MobileDevicePool
           end
         end
       end
-    
+      
       def list_devices
         list = `adb devices`
         devices = list.split("\n").inject([]) do |devices, device|
@@ -29,7 +29,7 @@ module MobileDevicePool
           end
         end
       end
-    
+      
       def list_devices_with_details
         devices = list_devices.inject([]) do |devices, device_sn|
           device = {}
@@ -41,12 +41,12 @@ module MobileDevicePool
           devices.push(device)
         end
       end
-    
+      
       def list_installed_packages(device_sn = nil)
         cmd = synthesize_command('adb shell pm list packages', device_sn)
         `#{cmd}`.split("\n").map! { |pkg| pkg.gsub(/^package:/, '').chomp }
       end
-    
+      
       def take_a_screenshot(dir, device_sn = nil)
         dir = dir.gsub(/\/$/, '') + '/'
         system("mkdir -p #{dir}")
@@ -62,7 +62,7 @@ module MobileDevicePool
         end
         return [true, {'file_path' => file_path}]
       end
-    
+      
       def get_app_info(package_name, device_sn = nil)
         cmd = synthesize_command("adb shell dumpsys package #{package_name}", device_sn)
         result = `#{cmd}`.chomp.match(/Packages:(.*|\n?)+\z/)[0].gsub(/Packages:\r?\n/, '').gsub(/^.*Package.*\r?\n/, '')
@@ -83,7 +83,7 @@ module MobileDevicePool
         end
         info
       end
-
+      
       def uninstall_app(package_name, device_sn = nil)
         cmd = synthesize_command("adb uninstall #{package_name}", device_sn)
         result = `#{cmd}`.chomp
@@ -95,7 +95,7 @@ module MobileDevicePool
           return false
         end
       end
-
+      
       def clear_app(package_name, device_sn = nil)
         cmd = synthesize_command("adb shell pm clear #{package_name}", device_sn)
         result = `#{cmd}`.chomp
@@ -107,7 +107,7 @@ module MobileDevicePool
           return false
         end
       end
-    
+      
       def input_keyevent(keyevent, device_sn = nil)
         # keyevent should < KeyEvent.getMaxKeyCode()
         if (keyevent.to_i.to_s == keyevent.to_s) && (keyevent.to_i >= 0 && keyevent.to_i <= 221)
@@ -118,30 +118,30 @@ module MobileDevicePool
           return false
         end
       end
-    
+      
       def input_text(text, device_sn = nil)
         text = text.gsub(/\s/, '%s')
         cmd = synthesize_command("adb shell input text #{text}", device_sn)
         `#{cmd}`
       end
-    
+      
       def press_power_button(device_sn = nil)
         keycode_power = 26
         input_keyevent(keycode_power, device_sn)
       end
-    
+      
       # Precondition: device needs to be rooted
       def change_language(language, country, device_sn = nil)
         cmd = synthesize_command("adb shell \"su -c 'setprop persist.sys.language #{language}; setprop persist.sys.country #{country}; stop; sleep 5; start'\"", device_sn)
         `#{cmd}`
       end
-    
+      
       def is_device_rooted?(device_sn = nil)
         cmd = synthesize_command("adb shell 'which su; echo $?'", device_sn)
         exit_status = `#{cmd}`.split(/\r\n/)[1].to_i
         return exit_status == 0
       end
-    
+      
       def get_current_activity(device_sn = nil)
         cmd = synthesize_command('adb shell dumpsys activity', device_sn)
         result = `#{cmd}`.chomp.match(/mFocusedActivity:.*?\{[^.]*?((\S+\.)*\S+)[^.]*?\}/i)
@@ -151,7 +151,7 @@ module MobileDevicePool
           return ''
         end
       end
-    
+      
       def open_app_via_deep_link(package_name, deep_link, device_sn = nil)
         cmd = synthesize_command("adb shell am start -W -a android.intent.action.VIEW -d \"#{deep_link}\" #{package_name}", device_sn)
         # exit status is always 0 here
@@ -164,13 +164,13 @@ module MobileDevicePool
           return false
         end
       end
-    
+      
       def show_battery_level(device_sn = nil)
         cmd = synthesize_command('adb shell dumpsys battery | grep level', device_sn)
         result = `#{cmd}`.chomp.match(/\d+$/)
         result ? result[0].to_i : 'N/A'
       end
-    
+      
       def start_monkey_test(package_name, device_sn = nil, options = {})
         numbers_of_events = options.fetch(:numbers_of_events, 50000)
         cmd = synthesize_command("adb shell monkey -p #{package_name} -v #{numbers_of_events}", device_sn)
@@ -178,7 +178,7 @@ module MobileDevicePool
           puts line
         end
       end
-    
+      
       def stop_monkey_test
         `adb shell ps | awk '/com\.android\.commands\.monkey/ { system("adb shell kill " $2) }'`
       end

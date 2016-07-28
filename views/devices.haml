@@ -26,12 +26,21 @@
     });
   }
   function loadDevicesList() {
-    $.get('/api/devices', function(data) {
-      $("#devicesList").empty();
+    $.get('/api/devices/android', function(data) {
+      $("#androidDevices").empty();
       if (data.length > 0) {
-        $("#devicesList").append($("<table>").attr("class", "table table-striped table-hover").append($("<thead>").append($("<tr>").append($("<td>").text("")).append($("<td>").text("Serial Number")).append($("<td>").text("Manufacturer")).append($("<td>").text("Brand")).append($("<td>").text("Model")).append($("<td>").text("OS Version")).append($("<td>").text("SDK API Level")).append($("<td>").text("Battery")))).append($("<tbody>")));
+        $("#androidDevices").append($("<table>").attr("class", "table table-striped table-hover").append($("<thead>").append($("<tr>").append($("<td>").text("")).append($("<td>").text("Serial Number")).append($("<td>").text("Manufacturer")).append($("<td>").text("Brand")).append($("<td>").text("Model")).append($("<td>").text("OS Version")).append($("<td>").text("SDK API Level")).append($("<td>").text("Battery")))).append($("<tbody>")));
         data.forEach(function(item) {
-          $("#devicesList").find("tbody").append($("<tr>").click(function() { $(this).find("td input:radio").prop("checked", true); }).append($("<td>").append($("<input>").attr({name: "device_sn", type: "radio", value: item.sn}))).append($("<td>").text(item.sn)).append($("<td>").text(item.manufacturer)).append($("<td>").text(item.brand)).append($("<td>").text(item.model)).append($("<td>").text(item.release)).append($("<td>").text(item.sdk)).append($("<td>").text(item.battery + "%")));
+          $("#androidDevices").find("tbody").append($("<tr>").click(function() { $(this).find("td input:radio").prop("checked", true); }).append($("<td>").append($("<input>").attr({name: "device_sn", type: "radio", value: item.sn}))).append($("<td>").text(item.sn)).append($("<td>").text(item.manufacturer)).append($("<td>").text(item.brand)).append($("<td>").text(item.model)).append($("<td>").text(item.release)).append($("<td>").text(item.sdk)).append($("<td>").text(item.battery + "%")));
+        });
+      }
+    });
+    $.get('/api/devices/ios', function(data) {
+      $("#iosDevices").empty();
+      if (data.length > 0) {
+        $("#iosDevices").append($("<table>").attr("class", "table table-striped table-hover").append($("<thead>").append($("<tr>").append($("<td>").text("")).append($("<td>").text("UDID")).append($("<td>").text("Model")).append($("<td>").text("OS Version")).append($("<td>").text("Battery")))).append($("<tbody>")));
+        data.forEach(function(item) {
+          $("#iosDevices").find("tbody").append($("<tr>").click(function() { $(this).find("td input:radio").prop("checked", true); }).append($("<td>").append($("<input>").attr({name: "device_udid", type: "radio", value: item.udid}))).append($("<td>").text(item.udid)).append($("<td>").text(item.model)).append($("<td>").text(item.os)).append($("<td>").text(item.battery + "%")));
         });
       }
     });
@@ -41,3 +50,7 @@
   %button{:type => "button", :class => "btn btn-warning vertical-center", :onclick => "loadDevicesList()", :style => "display: inline-block; margin-left: 10px;"} ↻
 %form{:role => "form", :action => "/devices/", :method => "post"}
   %div{:id => "devicesList"}
+    %h2 Android
+    %div{:id => "androidDevices"}
+    %h2 iOS
+    %div{:id => "iosDevices"}

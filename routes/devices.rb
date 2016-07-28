@@ -5,9 +5,33 @@ module MobileDevicePool
     register Sinatra::Namespace
     include FileHelper
     
-    # APIs
+    # Common APIs
     # ==================================================
     namespace '/api/devices' do
+      get '/?' do
+        content_type :json
+        android_devices = Adb.list_devices_with_details
+        ios_devices = LibImobileDevice.list_devices_with_details
+        devices = {}
+        devices['android'] = android_devices
+        devices['ios'] = ios_devices
+        json devices
+      end
+    end
+    
+    # iOS APIs
+    # ==================================================
+    namespace '/api/devices/ios' do
+      get '/?' do
+        content_type :json
+        devices = LibImobileDevice.list_devices_with_details
+        json devices
+      end
+    end
+    
+    # Android APIs
+    # ==================================================
+    namespace '/api/devices/android' do
       get '/?' do
         content_type :json
         devices = Adb.list_devices_with_details

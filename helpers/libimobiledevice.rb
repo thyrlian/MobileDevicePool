@@ -39,6 +39,10 @@ module MobileDevicePool
         get_info('ideviceinfo', udid, 'BatteryCurrentCapacity', 'com.apple.mobile.battery')
       end
       
+      def install_app(file)
+        `ideviceinstaller -i #{file}`
+      end
+      
       def get_info(cmd, udid, key, domain = nil)
         if domain
           `#{cmd} -u #{udid} -q #{domain} -k #{key}`.strip

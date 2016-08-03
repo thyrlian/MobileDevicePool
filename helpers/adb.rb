@@ -84,6 +84,11 @@ module MobileDevicePool
         info
       end
       
+      def install_app(file, device_sn = nil)
+        cmd = synthesize_command("adb install #{package_name}", device_sn)
+        `#{cmd}`
+      end
+      
       def uninstall_app(package_name, device_sn = nil)
         cmd = synthesize_command("adb uninstall #{package_name}", device_sn)
         result = `#{cmd}`.chomp

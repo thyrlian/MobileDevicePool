@@ -78,7 +78,7 @@ module MobileDevicePool
           language = req_data['language']
           country = req_data['country']
           if language && country
-            Adb.change_language(language, country, device_sn)
+            Thread.start{ Adb.change_language(language, country, device_sn) }
             return 202
           else
             return 400

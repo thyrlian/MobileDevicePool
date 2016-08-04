@@ -20,3 +20,7 @@ Forked from my own project: [**Captain-ADB**](https://github.com/thyrlian/Captai
 * `bundle install`
 * `sudo apt-get install libimobiledevice4 libimobiledevice-utils ideviceinstaller usbmuxd`
 * Download and install [Android SDK](https://developer.android.com/studio/index.html)
+
+## Run Service
+
+Run `rackup -p <PORT>` and the open `http://localhost:<PORT>/` in the browser 

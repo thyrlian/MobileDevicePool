@@ -5,6 +5,9 @@ Web UI to manage your mobile devices kingdom.  Currently support Android and iOS
 
 Forked from my own project: [**Captain-ADB**](https://github.com/thyrlian/Captain-ADB)
 
+## Demo
+<img src="https://github.com/thyrlian/MobileDevicePool/blob/master/public/img/demo.png">
+
 ## Setup
 
 * Run `bundle install` to install all ruby dependencies

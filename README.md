@@ -24,3 +24,6 @@ Forked from my own project: [**Captain-ADB**](https://github.com/thyrlian/Captai
 ## Run Service
 
 Run `rackup -p <PORT>` and the open `http://localhost:<PORT>/` in the browser 
+
+## License
+Copyright (c) 2016 Jing Li. See the [LICENSE](https://github.com/thyrlian/MobileDevicePool/blob/master/LICENSE) file for details.

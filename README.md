@@ -18,7 +18,7 @@ Forked from my own project: [**Captain-ADB**](https://github.com/thyrlian/Captai
 
 * `sudo gem install bundler`
 * `bundle install`
-* `sudo apt-get install libimobiledevice4 libimobiledevice-utils ideviceinstaller usbmuxd`
+* `sudo apt-get install libimobiledevice4 libimobiledevice-utils ideviceinstaller usbmuxd` (apt-get doesn't guarantee to have the latest version, which might not support the latest iOS version)
 * Download and install [Android SDK](https://developer.android.com/studio/index.html)
 
 ## Run Service
